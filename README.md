@@ -3,31 +3,13 @@ si-reactor
 
 Playground for combining SI and Reator/LMAX Distruptor
 
-```
----------------
-direct channel
+Performance comparison
+----------------------
 
-throughput: 133280/sec
-
----------------
-traditional spring task executor
-
-throughput: 177289/sec
-
-	<task:executor id="taskExecutor" 
-              		  pool-size="2-4"
-               		  queue-capacity="1024"
-               		  rejection-policy="CALLER_RUNS"/>
-
-
----------------
-reactorRingBufferTaskExecutor with ring buffer size 1024 and BlockingWaitStrategy
-
-throughput: 157035/sec
-
----------------
-reactorFixedThreadPoolTaskExecutor fixed size = 2, 'backlog' = 1024
-
-throughput: 156666/sec
-```
-
+| Type                                 | Same message throughput (msg/sec) | New message throughput (msg/sec) | New message w/ custom id throughput (msg/sec) |
+| -----------------------------------: | --------------------------------- | -------------------------------- | --------------------------------------------- |
+| Direct channel                       | 12820512                          | 441696                           | 2980625                                       |
+| Ring buffer channel                  | 6779661                           | 330742                           | 2068252                                       |
+| Spring executor                      | 1554001                           | 329109                           | 1992031                                       |
+| Reactor fixed thread pool executor   | 1808318                           | 281848                           | 1266624                                       |
+| Reactor ring buffer executor         | 1110494                           | 314613                           | 2089864                                       |

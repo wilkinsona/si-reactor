@@ -1,6 +1,6 @@
 package org.springframework.xd.samples;
 
-import org.springframework.context.Lifecycle;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.integration.Message;
 import org.springframework.integration.channel.AbstractSubscribableChannel;
 import org.springframework.integration.channel.MessagePublishingErrorHandler;
@@ -20,7 +20,7 @@ import com.lmax.disruptor.RingBuffer;
  *
  * @author Andy Wilkinson
  */
-public final class RingBufferChannel extends AbstractSubscribableChannel implements Lifecycle {
+public final class RingBufferChannel extends AbstractSubscribableChannel implements SmartLifecycle {
 
 	private final MessageDispatcher dispatcher = new UnicastingDispatcher();
 
@@ -83,5 +83,21 @@ public final class RingBufferChannel extends AbstractSubscribableChannel impleme
 		public void onEvent(MessageEvent event, long sequence, boolean endOfBatch) throws Exception {
 			this.dispatcher.dispatch(event.getMessage());
 		}
+	}
+
+	@Override
+	public int getPhase() {
+		return 0;
+	}
+
+	@Override
+	public boolean isAutoStartup() {
+		return true;
+	}
+
+	@Override
+	public void stop(Runnable callback) {
+		this.stop();
+		callback.run();
 	}
 }

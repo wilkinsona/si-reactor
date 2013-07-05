@@ -16,7 +16,7 @@
 	</logger>
 
 	<logger name="org.springframework.xd.samples">
-		<level value="info" />
+		<level value="warn" />
 	</logger>
 
 	<!-- Root Logger -->

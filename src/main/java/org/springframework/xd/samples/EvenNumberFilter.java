@@ -6,13 +6,14 @@ import org.springframework.integration.annotation.Filter;
 
 public class EvenNumberFilter {
 
-	
+
 	CountDownLatch latch;
-	
+
 	@Filter
 	public boolean evenOnly(String input) {
 		latch.countDown();
 		int number = Integer.parseInt(input);
+		System.out.println("filtered");
 		return ((number % 2) == 0);
 	}
 

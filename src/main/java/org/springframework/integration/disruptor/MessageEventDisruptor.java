@@ -24,11 +24,13 @@ import org.springframework.integration.Message;
 import org.springframework.integration.MessageDeliveryException;
 import org.springframework.util.ErrorHandler;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.InsufficientCapacityException;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 
 /**
  * A helper class to ease the use of an LMAX {@link Distruptor} and {@link RingBuffer}
@@ -71,16 +73,11 @@ public final class MessageEventDisruptor {
 	public void publish(Message<?> message) {
 		long sequence;
 
-		try{
-			sequence = this.ringBuffer.tryNext();
-		} catch (InsufficientCapacityException ice) {
-			throw new MessageDeliveryException(message);
-		}
+		sequence = this.ringBuffer.next();
 
 		try {
 			MessageEvent messageEvent = this.ringBuffer.get(sequence);
 			messageEvent.setMessage(message);
-			this.ringBuffer.publish(sequence);
 		} finally {
 			this.ringBuffer.publish(sequence);
 		}
